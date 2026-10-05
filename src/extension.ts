@@ -66,6 +66,18 @@ export async function activate({
     )
   );
   subscriptions.push(
+    vscode.commands.registerCommand(
+      'extension.phpServer.installRemoteTunnelService',
+      () => runRemoteTunnelServiceCommand('install')
+    )
+  );
+  subscriptions.push(
+    vscode.commands.registerCommand(
+      'extension.phpServer.uninstallRemoteTunnelService',
+      () => runRemoteTunnelServiceCommand('uninstall')
+    )
+  );
+  subscriptions.push(
     vscode.commands.registerCommand('extension.phpServer.askOllama', () => {
       askOllama().catch((error) => {
         const message =
@@ -74,6 +86,12 @@ export async function activate({
       });
     })
   );
+}
+
+function runRemoteTunnelServiceCommand(action: 'install' | 'uninstall') {
+  const terminal = vscode.window.createTerminal('Remote Tunnel Service');
+  terminal.show();
+  terminal.sendText(`code tunnel service ${action}`);
 }
 
 async function askOllama() {

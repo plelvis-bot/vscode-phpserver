@@ -21,7 +21,9 @@
     "onStartupFinished",
     "onCommand:extension.phpServer.serveProject",
     "onCommand:extension.phpServer.openFileInBrowser",
-    "onCommand:extension.phpServer.reloadServer"
+    "onCommand:extension.phpServer.reloadServer",
+    "onCommand:extension.phpServer.installRemoteTunnelService",
+    "onCommand:extension.phpServer.uninstallRemoteTunnelService"
   ],
   "main": "./out/extension",
   "repository": {
@@ -49,6 +51,14 @@
       {
         "command": "extension.phpServer.stopServer",
         "title": "PHP Server: Stop server"
+      },
+      {
+        "command": "extension.phpServer.installRemoteTunnelService",
+        "title": "PHP Server: Install Remote Tunnel Service"
+      },
+      {
+        "command": "extension.phpServer.uninstallRemoteTunnelService",
+        "title": "PHP Server: Uninstall Remote Tunnel Service"
       },
       {
         "command": "extension.phpServer.askOllama",

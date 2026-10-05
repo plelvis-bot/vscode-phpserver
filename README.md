@@ -37,3 +37,16 @@ Cross-origin browser requests are enabled. **The API has no authentication or
 access control.** Anyone who can reach the bound address can read and overwrite
 stored values. Do not expose it publicly unless your network or tunnel provides
 appropriate access restrictions.
+
+## VS Code Remote Tunnel service
+
+Use the **PHP Server: Install Remote Tunnel Service** command to open a
+terminal and run `code tunnel service install`. Complete any sign-in prompts in
+the terminal or browser. VS Code then registers the tunnel as a machine service
+so it can start without manually launching `code tunnel` each time. The VS Code
+`code` command must be available in the terminal's `PATH`.
+
+Use **PHP Server: Uninstall Remote Tunnel Service** to run
+`code tunnel service uninstall` when you no longer want the service. These
+commands manage the VS Code Remote Tunnel service; they do not expose or
+authenticate the JSON settings API.
