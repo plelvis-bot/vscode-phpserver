@@ -3,6 +3,7 @@ import CommandController from './controllers/CommandController';
 import BreakingChangesNotifier from './BreakingChangesNotifier';
 import { getRootPath, withErrorHandler } from './utils';
 import OllamaClient from './OllamaClient';
+import JsonSettingsServer from './server/JsonSettingsServer';
 
 const EXTENSION_NAME = 'phpserver';
 
@@ -21,6 +22,20 @@ export async function activate({
   globalState,
 }: ExtensionContext) {
   new BreakingChangesNotifier(globalState).notifyIfRequired();
+
+  const configuration = vscode.workspace.getConfiguration(EXTENSION_NAME);
+  const jsonSettingsServer = new JsonSettingsServer(
+    globalState,
+    configuration.get<string>('jsonApiHost', '127.0.0.1'),
+    configuration.get<number>('jsonApiPort', 3888),
+    (error) => vscode.window.showErrorMessage(error.message)
+  );
+  subscriptions.push(jsonSettingsServer);
+  jsonSettingsServer.start().catch((error: Error) => {
+    vscode.window.showErrorMessage(
+      `JSON settings API could not start: ${error.message}`
+    );
+  });
 
   const controller = new CommandController(
     getCommandControllerContext(extensionPath)

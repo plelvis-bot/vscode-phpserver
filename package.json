@@ -18,9 +18,10 @@
     "http server"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onCommand:extension.phpServer.serveProject",
     "onCommand:extension.phpServer.openFileInBrowser",
-    "onCommand:extension.phpServer.reloadServer",
+    "onCommand:extension.phpServer.reloadServer"
   ],
   "main": "./out/extension",
   "repository": {
@@ -107,6 +108,18 @@
           "type": "string",
           "default": "qwen3-coder:30b",
           "description": "Ollama model used by the PHP Server: Ask Ollama command."
+        },
+        "phpserver.jsonApiHost": {
+          "type": "string",
+          "default": "127.0.0.1",
+          "description": "Host interface for the JSON settings API. Use 0.0.0.0 only when you intend to expose it to other machines."
+        },
+        "phpserver.jsonApiPort": {
+          "type": "integer",
+          "default": 3888,
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Port for the JSON settings API."
         }
       }
     },
