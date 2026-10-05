@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import CommandController from './controllers/CommandController';
 import BreakingChangesNotifier from './BreakingChangesNotifier';
 import { getRootPath, withErrorHandler } from './utils';
+import OllamaClient from './OllamaClient';
 
 const EXTENSION_NAME = 'phpserver';
 
@@ -49,6 +50,53 @@ export async function activate({
       ErrorHandler(controller.stopServer)
     )
   );
+  subscriptions.push(
+    vscode.commands.registerCommand('extension.phpServer.askOllama', () => {
+      askOllama().catch((error) => {
+        const message =
+          error instanceof Error ? error.message : String(error);
+        vscode.window.showErrorMessage(message);
+      });
+    })
+  );
+}
+
+async function askOllama() {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    throw new Error('Open a file or select code before asking Ollama');
+  }
+
+  const prompt = await vscode.window.showInputBox({
+    prompt: 'What would you like Ollama to do with the selected code or file?',
+    placeHolder: 'Explain this code, find a bug, suggest a refactor...',
+    ignoreFocusOut: true,
+  });
+  if (!prompt) {
+    return;
+  }
+
+  const selection = editor.document.getText(editor.selection);
+  const context = selection || editor.document.getText();
+  const configuration = vscode.workspace.getConfiguration(EXTENSION_NAME);
+  const host = configuration.get<string>(
+    'ollamaHost',
+    'http://localhost:11434'
+  );
+  const model = configuration.get<string>(
+    'ollamaModel',
+    'qwen3-coder:30b'
+  );
+  const language = editor.document.languageId;
+  const response = await new OllamaClient(host, model).chat(
+    `${prompt}\n\nContext (${language}):\n\`\`\`${language}\n${context}\n\`\`\``
+  );
+
+  const document = await vscode.workspace.openTextDocument({
+    language: 'markdown',
+    content: `# Ollama response (${model})\n\n${response}`,
+  });
+  await vscode.window.showTextDocument(document, { preview: false });
 }
 
 function getCommandControllerContext(extensionPath: string) {
